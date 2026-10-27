@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سُمعة — لوحة التحكم (نسخة تجريبية)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Readex+Pro:wght@200;300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#14231d; --najdi:#0e4b3b; --najdi-deep:#0a382c;
+  --cream:#f6f1e7; --cream-2:#efe7d7; --panel:#fffdf7;
+  --gold:#c9962e; --gold-bright:#e3b552; --rust:#b3552e;
+  --green:#3d9a6b; --muted:#6b6353; --line:#d9cfba; --r:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Readex Pro',sans-serif;background:var(--cream);color:var(--ink);line-height:1.7}
+::selection{background:var(--gold);color:#fff}
+.mono{font-family:'IBM Plex Mono',monospace}
+.serif{font-family:'Amiri',serif}
+
+/* layout */
+.shell{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+@media(max-width:880px){.shell{grid-template-columns:1fr}}
+aside{
+  background:var(--najdi-deep);color:var(--cream);padding:28px 20px;
+  display:flex;flex-direction:column;gap:8px;position:sticky;top:0;height:100vh;
+}
+@media(max-width:880px){aside{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center}}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--cream);padding:6px 10px 24px}
+.brand .mark{width:40px;height:40px;background:var(--najdi);border-radius:11px;display:grid;place-items:center;color:var(--gold-bright);font-size:1.15rem;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.brand .nm{font-family:'Amiri',serif;font-size:1.5rem;font-weight:700}
+.brand .demo-pill{font-size:.62rem;background:var(--gold);color:#fff;border-radius:100px;padding:2px 10px;font-family:'Readex Pro',sans-serif;font-weight:600}
+.nav-btn{
+  display:flex;align-items:center;gap:12px;width:100%;text-align:right;
+  background:transparent;border:none;color:rgba(246,241,231,.72);cursor:pointer;
+  font-family:'Readex Pro',sans-serif;font-size:.95rem;font-weight:500;
+  padding:12px 14px;border-radius:11px;transition:.2s;
+}
+.nav-btn:hover{background:rgba(255,255,255,.06);color:var(--cream)}
+.nav-btn.on{background:rgba(227,181,82,.14);color:var(--gold-bright)}
+.nav-btn .ic{width:22px;text-align:center;font-size:1.05rem}
+.side-foot{margin-top:auto;font-size:.72rem;opacity:.45;padding:16px 10px 0}
+@media(max-width:880px){.side-foot{display:none}}
+
+main{padding:36px 40px;max-width:1080px;width:100%;margin:0 auto}
+@media(max-width:600px){main{padding:24px 18px}}
+.top-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:30px}
+.top-row h1{font-family:'Amiri',serif;font-size:1.9rem}
+.top-row .sub{color:var(--muted);font-size:.88rem;font-weight:300}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;cursor:pointer;border:none;
+  border-radius:100px;font-family:'Readex Pro',sans-serif;font-weight:600;font-size:.9rem;
+  padding:11px 22px;transition:.2s;text-decoration:none;
+}
+.btn-primary{background:var(--najdi);color:var(--cream);box-shadow:0 5px 16px rgba(14,75,59,.28)}
+.btn-primary:hover{transform:translateY(-2px)}
+.btn-gold{background:var(--gold);color:#fff;box-shadow:0 5px 16px rgba(201,150,46,.3)}
+.btn-gold:hover{transform:translateY(-2px)}
+.btn-sm{padding:8px 16px;font-size:.82rem}
+.btn-line{background:#fff;border:1.5px solid var(--line);color:var(--ink)}
+.btn-line:hover{border-color:var(--najdi)}
+
+.page{display:none;animation:fadein .35s}
+.page.on{display:block}
+@keyframes fadein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* cards */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:26px 28px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:24px}
+@media(max-width:980px){.grid4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.grid4{grid-template-columns:1fr}}
+.stat .lbl{font-size:.8rem;color:var(--muted);display:flex;align-items:center;gap:8px}
+.stat .val{font-family:'IBM Plex Mono',monospace;font-size:2.2rem;color:var(--najdi);margin:6px 0 2px}
+.stat .delta{font-size:.76rem;font-weight:600}
+.up{color:var(--green)} .down{color:var(--rust)}
+.two-col{display:grid;grid-template-columns:1.4fr 1fr;gap:18px}
+@media(max-width:880px){.two-col{grid-template-columns:1fr}}
+.card h3{font-size:1.05rem;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center}
+
+/* chart */
+.chart{display:flex;align-items:flex-end;gap:14px;height:170px;padding-top:10px}
+.bar-w{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end}
+.bar{width:100%;max-width:44px;background:linear-gradient(180deg,var(--najdi),var(--najdi-deep));border-radius:7px 7px 3px 3px;position:relative;transition:.3s;min-height:6px}
+.bar:hover{filter:brightness(1.2)}
+.bar .tip{
+  position:absolute;top:-26px;right:50%;transform:translateX(50%);
+  font-size:.68rem;background:var(--ink);color:#fff;border-radius:6px;padding:1px 8px;
+  opacity:0;transition:.2s;white-space:nowrap;font-family:'IBM Plex Mono',monospace;
+}
+.bar:hover .tip{opacity:1}
+.bar-w .m{font-size:.72rem;color:var(--muted)}
+.bar.gold-bar{background:linear-gradient(180deg,var(--gold-bright),var(--gold))}
+
+/* distribution */
+.dist-row{display:flex;align-items:center;gap:10px;margin-bottom:9px;font-size:.8rem}
+.dist-row .s{width:56px;color:var(--muted)}
+.dist-row .track{flex:1;height:9px;background:var(--cream-2);border-radius:100px;overflow:hidden}
+.dist-row .fill{height:100%;border-radius:100px;background:var(--gold)}
+.dist-row .n{width:26px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:.75rem;color:var(--muted)}
+
+/* business intel + competitors */
+.intel-sec{font-size:.72rem;font-weight:600;letter-spacing:.06em;margin:14px 0 8px;color:var(--muted)}
+.intel-sec:first-child{margin-top:0}
+.intel-sec.pos{color:var(--green)} .intel-sec.neg{color:var(--rust)}
+.comp-row{display:flex;align-items:center;gap:12px;margin-bottom:12px;font-size:.85rem}
+.comp-row .c-name{width:44%;font-weight:500}
+.comp-row .track{flex:1;height:10px;background:var(--cream-2);border-radius:100px;overflow:hidden}
+.comp-row .fill{height:100%;border-radius:100px;background:var(--najdi)}
+.comp-row.me .fill{background:var(--gold)}
+.comp-row.me .c-name{font-weight:700}
+.comp-row .c-val{width:46px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:.78rem}
+.lost-box{
+  margin-top:16px;background:rgba(179,85,46,.08);border:1.5px dashed var(--rust);border-radius:12px;
+  padding:14px 16px;font-size:.82rem;line-height:1.7
+}
+.lost-box b{font-family:'IBM Plex Mono',monospace;color:var(--rust);font-size:1.15rem}
+
+/* reviews */
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.chip{
+  border:1.5px solid var(--line);background:#fff;border-radius:100px;padding:7px 18px;
+  font-family:'Readex Pro',sans-serif;font-size:.83rem;font-weight:500;cursor:pointer;transition:.2s;color:var(--muted);
+}
+.chip.on{background:var(--najdi);border-color:var(--najdi);color:var(--cream)}
+.review{border:1px solid var(--line);border-radius:var(--r);background:var(--panel);padding:22px 24px;margin-bottom:16px;transition:box-shadow .2s}
+.review:hover{box-shadow:0 10px 30px rgba(20,35,29,.07)}
+.rv-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.avatar{
+  width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+  background:var(--cream-2);color:var(--najdi);font-weight:700;font-size:1rem;border:1.5px solid var(--line);flex-shrink:0;
+}
+.rv-head .who b{font-size:.98rem}
+.rv-head .who span{font-size:.75rem;color:var(--muted);display:block}
+.stars{color:var(--gold);letter-spacing:2px;font-size:.95rem}
+.rv-text{margin:14px 2px 0;font-size:.93rem;font-weight:300}
+.badge-replied{font-size:.7rem;font-weight:600;background:rgba(61,154,107,.12);color:var(--green);border-radius:100px;padding:3px 12px;margin-inline-start:auto}
+.rv-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.reply-box{
+  margin-top:16px;background:var(--cream);border:1.5px dashed var(--gold);border-radius:12px;
+  padding:18px 20px;animation:fadein .3s;
+}
+.reply-box .rb-lbl{font-size:.72rem;font-weight:600;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.reply-box p{font-size:.92rem;font-weight:300}
+.rv-actions .ok{color:var(--green);align-self:center;font-size:.8rem;font-weight:600;display:none}
+.review.replied .ok{display:block}
+.review.replied .gen-btn{display:none}
+
+/* request tab */
+.req-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:880px){.req-grid{grid-template-columns:1fr}}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:.83rem;font-weight:600;margin-bottom:7px}
+.field input,.field select{
+  width:100%;padding:12px 16px;border:1.5px solid var(--line);border-radius:11px;
+  font-family:'Readex Pro',sans-serif;font-size:.92rem;background:#fff;color:var(--ink);
+  outline:3px solid transparent;transition:.2s;
+}
+.field input:focus,.field select:focus{border-color:var(--najdi);outline-color:rgba(14,75,59,.12)}
+.msg-preview{
+  background:var(--cream);border:1.5px solid var(--line);border-radius:16px;padding:18px;
+  font-size:.9rem;position:relative;margin-bottom:16px;min-height:96px;font-weight:300;
+}
+.msg-preview::before{
+  content:"معاينة الرسالة";position:absolute;top:-11px;right:18px;background:var(--gold);
+  color:#fff;font-size:.68rem;font-weight:600;padding:2px 12px;border-radius:100px;
+}
+.qr-zone{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.qr-zone img{border-radius:12px;border:1.5px solid var(--line);background:#fff;padding:8px}
+.qr-meta{font-size:.8rem;color:var(--muted)}
+.qr-meta b{color:var(--najdi);font-family:'IBM Plex Mono',monospace;direction:ltr;display:inline-block}
+.copy-hint{font-size:.75rem;color:var(--green);margin-inline-start:8px;opacity:0;transition:.2s}
+.copy-hint.show{opacity:1}
+
+/* settings */
+.set-grid{max-width:560px}
+.hint{font-size:.78rem;color:var(--muted);margin-top:-10px;margin-bottom:16px;font-weight:300}
+
+/* toast */
+.toast{
+  position:fixed;bottom:26px;right:26px;z-index:99;background:var(--ink);color:var(--cream);
+  border-radius:14px;padding:16px 20px;box-shadow:0 18px 44px rgba(0,0,0,.3);
+  display:flex;gap:14px;align-items:center;max-width:360px;
+  transform:translateY(140%);transition:transform .45s cubic-bezier(.2,.9,.3,1.2);
+}
+.toast.show{transform:none}
+.toast .t-ic{width:40px;height:40px;border-radius:11px;background:var(--rust);display:grid;place-items:center;font-size:1.1rem;flex-shrink:0}
+.toast b{font-size:.88rem;display:block}
+.toast span{font-size:.75rem;opacity:.7;font-weight:300}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside>
+    <a class="brand" href="index.html">
+      <span class="mark">★</span>
+      <span class="nm">سُمعة</span>
+      <span class="demo-pill">تجريبي</span>
+    </a>
+    <button class="nav-btn on" data-page="overview"><span class="ic">◈</span> نظرة عامة</button>
+    <button class="nav-btn" data-page="reviews"><span class="ic">✦</span> التقييمات</button>
+    <button class="nav-btn" data-page="request"><span class="ic">⇪</span> طلب تقييم</button>
+    <button class="nav-btn" data-page="settings"><span class="ic">⚙</span> الإعدادات</button>
+    <div class="side-foot">نسخة تجريبية ببيانات وهمية — <a href="index.html" style="color:var(--gold-bright)">الصفحة الرئيسية</a></div>
+  </aside>
+
+  <main>
+    <div class="top-row">
+      <div>
+        <h1 id="bizTitle">مركز الإتقان لصيانة السيارات</h1>
+        <div class="sub">لوحة السمعة الرقمية · آخر تحديث اليوم</div>
+      </div>
+      <button class="btn btn-primary" onclick="alert('في النسخة الكاملة: يفتح نموذج إرسال جماعي لطلبات التقييم لكل عملاء الأمس.')">إرسال طلبات الأمس (12)</button>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div class="page on" id="pg-overview">
+      <div class="grid4">
+        <div class="card stat">
+          <div class="lbl">التقييم العام</div>
+          <div class="val">4.7<span style="font-size:1.1rem;color:var(--gold)">★</span></div>
+          <div class="delta up">▲ 0.3 عن الشهر الماضي</div>
+        </div>
+        <div class="card stat">
+          <div class="lbl">إجمالي التقييمات</div>
+          <div class="val">312</div>
+          <div class="delta up">▲ 38 هذا الشهر</div>
+        </div>
+        <div class="card stat">
+          <div class="lbl">معدل الرد</div>
+          <div class="val">94%</div>
+          <div class="delta up">▲ من 41%</div>
+        </div>
+        <div class="card stat">
+          <div class="lbl">طلبات واتساب المُرسلة</div>
+          <div class="val">1,204</div>
+          <div class="delta up">▲ 41% معدل استجابة</div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <h3>التقييمات الجديدة — آخر 6 أشهر <span class="mono" style="font-size:.75rem;color:var(--muted)">مصدر: جوجل</span></h3>
+          <div class="chart" id="chart"></div>
+        </div>
+        <div class="card">
+          <h3>توزيع النجوم</h3>
+          <div class="dist-row"><span class="s">★★★★★</span><div class="track"><div class="fill" style="width:72%"></div></div><span class="n">225</span></div>
+          <div class="dist-row"><span class="s">★★★★</span><div class="track"><div class="fill" style="width:38%"></div></div><span class="n">56</span></div>
+          <div class="dist-row"><span class="s">★★★</span><div class="track"><div class="fill" style="width:14%"></div></div><span class="n">19</span></div>
+          <div class="dist-row"><span class="s">★★</span><div class="track"><div class="fill" style="width:8%;background:var(--rust)"></div></div><span class="n">8</span></div>
+          <div class="dist-row"><span class="s">★</span><div class="track"><div class="fill" style="width:5%;background:var(--rust)"></div></div><span class="n">4</span></div>
+          <p style="font-size:.78rem;color:var(--muted);margin-top:14px;font-weight:300">بعد تفعيل طلبات واتساب في يوليو، تضاعف عدد التقييمات الخمس نجوم.</p>
+        </div>
+      </div>
+      <div class="two-col" style="margin-top:18px">
+        <div class="card">
+          <h3>ذكاء التقييمات — ماذا يقول عملاؤك فعلًا؟</h3>
+          <div id="intelBox"></div>
+          <p style="font-size:.78rem;color:var(--muted);margin-top:14px;font-weight:300">نحلل كلمات كل تقييم ونستخرج منها نقاط قوتك لتحصينها، وأسباب شكوى عملائك لإصلاحها قبل أن تتكرر — هذه معلومات لا تظهر في أي تقرير مبيعات.</p>
+        </div>
+        <div class="card">
+          <h3>مؤشر المنافسين — نفس الحي</h3>
+          <div class="comp-row me"><span class="c-name">مركز الإتقان (أنت)</span><div class="track"><div class="fill" style="width:94%"></div></div><span class="c-val">4.7★</span></div>
+          <div class="comp-row"><span class="c-name">مركز المبارك للصيانة</span><div class="track"><div class="fill" style="width:90%"></div></div><span class="c-val">4.5★</span></div>
+          <div class="comp-row"><span class="c-name">ورشة الخليج السريعة</span><div class="track"><div class="fill" style="width:86%"></div></div><span class="c-val">4.3★</span></div>
+          <div class="comp-row"><span class="c-name">ميكانيكا الرياض</span><div class="track"><div class="fill" style="width:80%"></div></div><span class="c-val">4.0★</span></div>
+          <div class="lost-box">
+            في الشهر الماضي، يقدَّر أنك خسرت <b>43</b> عميلًا اختاروا منافسًا ذا تقييم أعلى ظهر قبل اسمك في نتائج البحث. كل 0.1 نجمة فرق تُقدَّر بنحو <b>14 عميلًا شهريًا</b>.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVIEWS -->
+    <div class="page" id="pg-reviews">
+      <div class="filters">
+        <button class="chip on" data-f="all">الكل (9)</button>
+        <button class="chip" data-f="5">★★★★★ (5)</button>
+        <button class="chip" data-f="4">★★★★ (2)</button>
+        <button class="chip" data-f="low">أقل من 4★ (2)</button>
+      </div>
+      <div id="reviewList"></div>
+    </div>
+
+    <!-- REQUEST -->
+    <div class="page" id="pg-request">
+      <div class="req-grid">
+        <div class="card">
+          <h3>إنشاء طلب تقييم جديد</h3>
+          <div class="field">
+            <label>اسم العميل</label>
+            <input id="rqName" type="text" placeholder="مثال: أبو محمد" value="أبو محمد">
+          </div>
+          <div class="field">
+            <label>رقم الواتساب</label>
+            <input id="rqPhone" type="text" placeholder="05xxxxxxxx" style="direction:ltr;text-align:right" value="0555XXXXXXX">
+          </div>
+          <div class="field">
+            <label>الخدمة المقدمة</label>
+            <select id="rqService">
+              <option>صيانة دورية شاملة</option>
+              <option>تغيير زيت وفلاتر</option>
+              <option>تلميع وتنظيف</option>
+              <option>فحص قبل شراء</option>
+            </select>
+          </div>
+          <button class="btn btn-gold" onclick="buildRequest()">توليد الرسالة ورمز QR</button>
+        </div>
+        <div class="card">
+          <h3>الرسالة الجاهزة للإرسال</h3>
+          <div class="msg-preview" id="msgPreview">عبّئ البيانات ثم اضغط «توليد الرسالة» — ستظهر هنا صياغة جاهزة تناسب خدمتك ولهجة عملائك.</div>
+          <div class="qr-zone" id="qrZone" style="display:none">
+            <img id="qrImg" width="132" height="132" alt="QR">
+            <div class="qr-meta">
+              <div>حلقة QR تفتح رابط التقييم مباشرة — ضعه على الفاتورة أو طاولة الاستقبال.</div>
+              <div style="margin-top:8px">الرابط: <b id="shortLink">s.sa/x/3f9a</b></div>
+              <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+                <button class="btn btn-primary btn-sm" onclick="alert('في النسخة الكاملة: تُرسل الرسالة تلقائيًا عبر واتساب أعمال من رقم نشاطك.')">إرسال عبر واتساب</button>
+                <button class="btn btn-line btn-sm" onclick="copyMsg(this)">نسخ النص<span class="copy-hint">✓ تم النسخ</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:18px">
+        <h3>محطة QR الذكية — أداء اليوم <span class="mono" style="font-size:.75rem;color:var(--muted)">بدون أي رقم هاتف</span></h3>
+        <div class="grid4">
+          <div class="stat"><div class="lbl">مسوحات QR اليوم</div><div class="val">37</div><div class="delta up">▲ 12 عن الأمس</div></div>
+          <div class="stat"><div class="lbl">تقييمات نتجت عنها</div><div class="val">19</div><div class="delta up">▲ معدل تحويل 51%</div></div>
+          <div class="stat"><div class="lbl">أفضل طاولة</div><div class="val" style="font-size:1.3rem">طاولة 7</div><div class="delta up">▲ 6 تقييمات اليوم</div></div>
+          <div class="stat"><div class="lbl">ذروة المسح</div><div class="val" style="font-size:1.3rem">9 م</div><div class="delta up">▲ بعد العشاء مباشرة</div></div>
+        </div>
+        <p style="font-size:.78rem;color:var(--muted);margin-top:14px;font-weight:300">كل رمز مُتتبَّع على حدة: الطاولة، الفني، الفاتورة، الفرع — فتعرف بالضبط أي نقطة اتصال تولّد تقييماتك، وأيها يحتاج تدخلًا. يعمل للمطاعم والصالونات وأي نشاط لا يجمع أرقام عملائه.</p>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="page" id="pg-settings">
+      <div class="card set-grid">
+        <h3>بيانات النشاط</h3>
+        <div class="field">
+          <label>اسم المنشأة</label>
+          <input id="stName" type="text">
+        </div>
+        <div class="field">
+          <label>رابط ملف جوجل التجاري</label>
+          <input id="stMaps" type="text" style="direction:ltr;text-align:right" placeholder="https://g.page/...">
+          <div class="hint">تجده في تطبيق خرائط جوجل ← ملف نشاطك ← مشاركة.</div>
+        </div>
+        <div class="field">
+          <label>رقم واتساب أعمال النشاط</label>
+          <input id="stPhone" type="text" style="direction:ltr;text-align:right" placeholder="05xxxxxxxx">
+        </div>
+        <button class="btn btn-primary" onclick="saveSettings(this)">حفظ الإعدادات</button>
+        <div class="hint" id="setSaved" style="color:var(--green);font-weight:600"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- live alert toast -->
+<div class="toast" id="toast">
+  <div class="t-ic">★</div>
+  <div><b>تقييم جديد — 2 نجوم</b><span>«انتظرت أكثر من ساعة...» اضغط للاطلاع على مسودة الرد الذكي.</span></div>
+</div>
+
+<script>
+/* ================= settings ================= */
+var DEF={name:'مركز الإتقان لصيانة السيارات',maps:'https://g.page/etqan-demo',phone:'0555000000',short:'s.sa/x/3f9a'};
+var st=JSON.parse(localStorage.getItem('samea_settings')||'null')||DEF;
+function paintSettings(){stName.value=st.name;stMaps.value=st.maps;stPhone.value=st.phone;bizTitle.textContent=st.name;}
+function saveSettings(btn){
+  st={name:stName.value.trim()||DEF.name,maps:stMaps.value.trim()||DEF.maps,phone:stPhone.value.trim()||DEF.phone,short:st.short};
+  localStorage.setItem('samea_settings',JSON.stringify(st));
+  paintSettings();setSaved.textContent='✓ تم الحفظ — ستُستخدم في كل الرسائل والردود';setTimeout(function(){setSaved.textContent=''},3000);
+}
+paintSettings();
+
+/* ================= nav ================= */
+document.querySelectorAll('.nav-btn').forEach(function(b){
+  b.onclick=function(){
+    document.querySelectorAll('.nav-btn').forEach(function(x){x.classList.remove('on')});
+    b.classList.add('on');
+    document.querySelectorAll('.page').forEach(function(p){p.classList.remove('on')});
+    document.getElementById('pg-'+b.dataset.page).classList.add('on');
+  };
+});
+
+/* ================= chart ================= */
+var months=[['أبريل',6],['مايو',8],['يونيو',11],['يوليو',17],['أغسطس',24],['سبتمبر',38]];
+var mx=Math.max.apply(null,months.map(function(m){return m[1]}));
+document.getElementById('chart').innerHTML=months.map(function(m,i){
+  var h=Math.round(m[1]/mx*100), gold=i>=3?' gold-bar':'';
+  return '<div class="bar-w"><div class="bar'+gold+'" style="height:'+h+'%"><span class="tip">+'+m[1]+' تقييم</span></div><span class="m">'+m[0]+'</span></div>';
+}).join('');
+
+/* ================= reviews demo ================= */
+var REVIEWS=[
+ {n:'محمد العتيبي',r:5,t:'أفضل مركز صيانة جربته في الرياض. سرعة في الإنجاز وسعر واضح من البداية بدون مفاجآت. أبو خالد الشرطي شرح لي كل شي بصبر.',d:'قبل 3 أيام',tags:['سرعة','سعر','شرح']},
+ {n:'نورة السبيعي',r:5,t:'تعامل راقي جدًا، والمتابعة بعد الصيانة عبر الواتساب كانت لمسة مميزة. استلمت السيارة مغسلة وملمعة!',d:'قبل أسبوع',tags:['تعامل','متابعة']},
+ {n:'فهد القحطاني',r:4,t:'الخدمة جيدة والفنيين محترفين، لكن الانتظار في الاستقبال طال شوي يوم الدخول.',d:'قبل أسبوعين',tags:['انتظار']},
+ {n:'أم عبدالله',r:5,t:'صادقين في التشخيص، ما زادوا عليّ شي ما أحتاجه. هذا اللي يخلي الواحد يرجع لهم.',d:'قبل 3 أسابيع',tags:['صدق','سعر']},
+ {n:'سلطان الحربي',r:2,t:'حجزت موعد الساعة ١٠ وبدأوا شغلي بعد ساعة ونص. الشغل نفسه تمام بس التنظيم سيء.',d:'قبل شهر',tags:['انتظار','موعد']},
+ {n:'ريم الدوسري',r:5,t:'طلبت فحص قبل شراء سيارة مستعملة، التقرير وصلني نفس اليوم مفصل ونظيف. وفروا عليّ مشكرة كبيرة.',d:'قبل شهر',tags:['سرعة','تقرير']},
+ {n:'خالد المالكي',r:4,t:'أسعارهم منصفة والعمل مرتب. أتمنى يفتحون فرع في شمال الرياض.',d:'قبل شهرين',tags:['سعر']},
+ {n:'هند الشمري',r:1,t:'اتصلت ثلاث مرات وما أحد رد علي. خذوا موعد وأكدوا وبعدين تجاهلوا. تجربة سيئة.',d:'قبل شهرين',tags:['تواصل','تجاهل']},
+ {n:'عبدالعزيز الغامدي',r:5,t:'من زبائنهم من ٣ سنوات. عقدي السنوي معهم أسهل شيء سويته لسيارتي.',d:'قبل شهرين',tags:['عقد','ولاء']}
+];
+
+/* ================= business intel (sentiment from tags) ================= */
+var TAG_LABEL={'سرعة':'السرعة في الإنجاز','سعر':'شفافية الأسعار','تعامل':'رقة التعامل','متابعة':'المتابعة بعد الخدمة','صدق':'الصدق في التشخيص','شرح':'شرح الفنيين','تقرير':'تقارير الفحص','عقد':'العقود السنوية','ولاء':'ثقة العملاء الدائمين','انتظار':'طول الانتظار','موعد':'تأخر المواعيد','تواصل':'ردّ الهاتف','تجاهل':'الشعور بالإهمال'};
+(function renderIntel(){
+  var pos={},neg={};
+  REVIEWS.forEach(function(rv){rv.tags.forEach(function(t){var b=rv.r>=4?pos:neg;b[t]=(b[t]||0)+1})});
+  function rows(obj,cls){
+    var mx=1;for(var k in obj){mx=Math.max(mx,obj[k])}
+    return Object.keys(obj).sort(function(a,b){return obj[b]-obj[a]}).map(function(k){
+      return '<div class="dist-row"><span class="s" style="width:110px;font-size:.76rem">'+(TAG_LABEL[k]||k)+'</span><div class="track"><div class="fill" style="width:'+Math.round(obj[k]/mx*100)+'%'+(cls==='neg'?';background:var(--rust)':'')+'"></div></div><span class="n">'+obj[k]+'</span></div>';
+    }).join('');
+  }
+  document.getElementById('intelBox').innerHTML=
+    '<div class="intel-sec pos">▲ ما يميزك في نظر عملائك</div>'+rows(pos,'pos')+
+    '<div class="intel-sec neg">▼ أكثر ما يزعجهم (فرص تحسين)</div>'+rows(neg,'neg');
+})();
+
+/* rule-based "AI" reply generator (demo of the real LLM endpoint) */
+function genReply(rv){
+  var open=rv.n.split(' ')[0];
+  if(rv.r>=5){
+    var why=rv.tags.map(function(t){
+      return{'سرعة':'سرعتكم في الإنجاز','سعر':'شفافيتكم في السعر','تعامل':'ذوقكم في التعامل','متابعة':'المتابعة بعد الخدمة','صدق':'صدقكم في التشخيص','تقرير':'تفصيل تقرير الفحص','عقد':'عقود الصيانة السنوية','ولاء':'ثقتكم المتجددة بنا','شرح':'شرح الفنيين التفصيلي'}[t]||null;
+    }).filter(Boolean);
+    var mid=why.length?('وكلماتك عن '+why.slice(0,2).join(' و ')+' تسعدنا خصوصًا.'):'';
+    return 'شكرًا جزيلًا '+open+' على هذه الكلمات الجميلة! ⭐ '+mid+' نعدك بأن نبقى على نفس المستوى في كل زيارة، وموعدك القادم عندنا أجمل. — فريق '+st.name;
+  }
+  if(rv.r===4){
+    return 'شكرًا لك '+open+' على تقييمك وثقتك. 🙏 سمعنا ملاحظتك بوضوح، وبدأنا فعليًا بمراجعة تدفق الاستقبال لتقصير وقت الانتظار. يهمنا أن تكون تجربتك القادمة خمس نجوم فعلًا، ويسعدنا تواصلك معنا مباشرة على '+st.phone+' لأي ملاحظة.';
+  }
+  return 'نشكر لك صراحتك '+open+'، ونعتذر بصدق عمّا حصل. ⚠️ ما ذكرته لا يمثل المستوى الذي نلتزم به — تولّى إدارة المركز الموضوع شخصيًا، ونسعد باتصالك على '+st.phone+' لنصحح التجربة ونعوّضك عن الوقت. هدفنا أن نستحق تقييمك القادم.';
+}
+
+function starStr(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n)}
+var curFilter='all';
+function renderReviews(){
+  var list=REVIEWS.filter(function(rv){
+    if(curFilter==='all')return true;
+    if(curFilter==='low')return rv.r<4;
+    return rv.r===+curFilter;
+  });
+  document.getElementById('reviewList').innerHTML=list.map(function(rv,i){
+    var idx=REVIEWS.indexOf(rv);
+    return '<div class="review'+(rv.replied?' replied':'')+'">'
+      +'<div class="rv-head"><div class="avatar">'+rv.n.charAt(0)+'</div>'
+      +'<div class="who"><b>'+rv.n+'</b><span>'+rv.d+' · تقييم جوجل</span></div>'
+      +'<div class="stars">'+starStr(rv.r)+'</div>'
+      +(rv.replied?'<span class="badge-replied">✓ تم الرد</span>':'')
+      +'</div>'
+      +'<p class="rv-text">«'+rv.t+'»</p>'
+      +'<div class="rv-actions">'
+      +'<button class="btn btn-gold btn-sm gen-btn" onclick="genReplyFor('+idx+',this)">✦ توليد رد ذكي</button>'
+      +'<span class="ok">✓ تم نشر الرد على جوجل</span>'
+      +'</div><div class="reply-slot"></div></div>';
+  }).join('');
+}
+function genReplyFor(i,btn){
+  var slot=btn.closest('.review').querySelector('.reply-slot');
+  btn.disabled=true;btn.textContent='✦ الذكاء الاصطناعي يصيغ الرد...';
+  setTimeout(function(){
+    var rv=REVIEWS[i],txt=genReply(rv);
+    slot.innerHTML='<div class="reply-box"><div class="rb-lbl">✦ الرد الذكي المقترح — راجعه ثم انشر</div><p>'+txt+'</p>'
+      +'<div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">'
+      +'<button class="btn btn-primary btn-sm" onclick="publishReply('+i+',this)">نشر الرد</button>'
+      +'<button class="btn btn-line btn-sm" data-m="'+txt.replace(/"/g,'&quot;')+'" onclick="copyText(this.dataset.m,this)">نسخ<span class="copy-hint">✓</span></button>'
+      +'<button class="btn btn-line btn-sm" onclick="genReplyFor('+i+',this.closest(\'.review\').querySelector(\'.gen-btn\')||this)">إعادة الصياغة</button>'
+      +'</div></div>';
+    btn.textContent='✦ توليد رد ذكي';btn.disabled=false;
+  },900);
+}
+function publishReply(i,btn){
+  REVIEWS[i].replied=true;renderReviews();
+}
+function copyText(t,btn){navigator.clipboard.writeText(t);if(btn){var h=btn.querySelector('.copy-hint');if(h){h.classList.add('show');setTimeout(function(){h.classList.remove('show')},1600)}}}
+function copyMsg(btn){copyText(document.getElementById('msgPreview').innerText,btn)}
+renderReviews();
+document.querySelectorAll('.chip').forEach(function(c){
+  c.onclick=function(){
+    document.querySelectorAll('.chip').forEach(function(x){x.classList.remove('on')});
+    c.classList.add('on');curFilter=c.dataset.f;renderReviews();
+  };
+});
+
+/* ================= request builder ================= */
+function buildRequest(){
+  var nm=rqName.value.trim()||'العميل الكريم',svc=rqService.value;
+  var msg='السلام عليكم '+nm+' 🌟\nسعدنا بخدمتك اليوم: «'+svc+'» في '+st.name+'.\nرأيك يهمنا ويطور خدمتنا — تقييمك يستغرق أقل من دقيقة:\n'+st.maps+'\n\nولو في أي ملاحظة، رد هنا وصلنا فورًا. شكرًا لثقتك 🙏';
+  document.getElementById('msgPreview').textContent=msg;
+  var zone=document.getElementById('qrZone');zone.style.display='flex';
+  document.getElementById('qrImg').src='https://api.qrserver.com/v1/create-qr-code/?size=260x260&data='+encodeURIComponent(st.maps);
+  document.getElementById('shortLink').textContent=st.short;
+}
+buildRequest();
+
+/* ================= live alert demo ================= */
+setTimeout(function(){
+  var t=document.getElementById('toast');t.classList.add('show');
+  t.onclick=function(){t.classList.remove('show');document.querySelector('[data-page="reviews"]').click()};
+  setTimeout(function(){t.classList.remove('show')},9000);
+},8000);
+</script>
+</body>
+</html>

@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سُمعة — سمعتك الرقمية على خرائط جوجل، مؤتمتة بالكامل</title>
+<meta name="description" content="سُمعة: منصة عربية لإدارة تقييمات جوجل — طلب تقييم تلقائي عبر واتساب، ردود ذكية بالعربية، وتنبيهات فورية. متوافقة 100% مع سياسات جوجل.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0b2430;
+  --najdi:#00546e;
+  --najdi-deep:#003b4d;
+  --cream:#f3f6f8;
+  --cream-2:#e9f2f5;
+  --gold:#a97e0f;
+  --gold-bright:#d9a520;
+  --rust:#bf4136;
+  --muted:#5b6e77;
+  --line:#dfe7ea;
+  --radius:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'IBM Plex Sans Arabic',sans-serif;
+  background:var(--cream);
+  color:var(--ink);
+  line-height:1.8;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+.mono,.stat-num,.calc-need,.price,.badge-float .num,.calc-field input{font-variant-numeric:tabular-nums}
+::selection{background:var(--gold);color:#fff}
+
+/* texture & pattern */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='none' stroke='%2300546e' stroke-opacity='0.05' stroke-width='1'%3E%3Cpath d='M80 8 L104 56 L152 80 L104 104 L80 152 L56 104 L8 80 L56 56 Z'/%3E%3Cpath d='M80 40 L95 65 L120 80 L95 95 L80 120 L65 95 L40 80 L65 65 Z'/%3E%3C/g%3E%3C/svg%3E");
+}
+body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.wrap{position:relative;z-index:1;max-width:1120px;margin:0 auto;padding:0 28px}
+
+/* typography helpers */
+.serif{font-family:'Alexandria',sans-serif}
+.mono{font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:500}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:.78rem;letter-spacing:.12em;color:var(--najdi);
+  text-transform:uppercase;font-weight:600;
+}
+.eyebrow::before{content:"";width:34px;height:1.5px;background:var(--gold)}
+
+/* ===== NAV ===== */
+.topstrip{
+  position:fixed;top:0;left:0;right:0;height:4px;z-index:99;
+  background:linear-gradient(90deg,var(--najdi),var(--gold-bright),var(--najdi-deep));
+}
+nav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:72px}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)}
+.logo-mark{
+  width:38px;height:38px;background:var(--najdi);border-radius:10px;
+  display:grid;place-items:center;color:var(--gold-bright);font-size:1.1rem;
+  box-shadow:0 4px 14px rgba(0,84,110,.28);
+}
+.logo-name{font-family:'Alexandria',sans-serif;font-size:1.5rem;font-weight:700}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links a{color:var(--ink);text-decoration:none;font-size:.92rem;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--gold)}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+  border:none;border-radius:10px;text-decoration:none;
+  font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:600;font-size:.95rem;
+  padding:13px 28px;transition:transform .2s,box-shadow .2s;
+}
+.btn-primary{background:var(--najdi);color:var(--cream);box-shadow:0 6px 20px rgba(0,84,110,.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(0,84,110,.38)}
+.btn-ghost{background:transparent;color:var(--najdi);border:1.5px solid var(--najdi);padding:11px 26px}
+.btn-ghost:hover{background:var(--najdi);color:var(--cream)}
+.btn-gold{background:var(--gold);color:#fff;box-shadow:0 6px 20px rgba(169,126,15,.35)}
+.btn-gold:hover{transform:translateY(-2px)}
+@media(max-width:760px){.nav-links{display:none}}
+
+/* ===== HERO ===== */
+header{padding:90px 0 70px;position:relative;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:44px}}
+.hero-glow{
+  position:absolute;top:-220px;left:-180px;width:560px;height:560px;border-radius:50%;
+  background:radial-gradient(circle,rgba(169,126,15,.16),transparent 65%);
+  pointer-events:none;
+}
+h1{
+  font-family:'Alexandria',sans-serif;font-weight:700;
+  font-size:clamp(2.4rem,5.4vw,4.1rem);line-height:1.42;
+  letter-spacing:-.01em;margin:20px 0 8px;
+}
+h1 .gold{color:var(--gold);position:relative;white-space:nowrap}
+h1 .gold svg{position:absolute;bottom:-14px;right:0;width:100%;height:14px}
+.hero-sub{font-size:1.1rem;color:var(--muted);max-width:34rem;font-weight:300;margin:18px 0 34px}
+.hero-ctas{display:flex;gap:16px;flex-wrap:wrap}
+.hero-note{margin-top:22px;font-size:.85rem;color:var(--muted);display:flex;align-items:center;gap:8px}
+.hero-note .dot{width:8px;height:8px;border-radius:50%;background:#0f8a6d;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(15,138,109,.5)}50%{box-shadow:0 0 0 7px rgba(15,138,109,0)}}
+
+/* hero phone mock */
+.hero-visual{position:relative;animation:float 6s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.phone{
+  background:#fff;border-radius:32px;box-shadow:0 30px 70px rgba(11,36,48,.22);
+  border:1px solid var(--line);overflow:hidden;max-width:340px;margin:0 auto;
+  direction:rtl;position:relative;z-index:2;
+}
+.phone-notch{height:26px;background:var(--ink);border-radius:0 0 16px 16px;width:150px;margin:0 auto}
+.phone-body{padding:18px 16px 22px}
+.chat-day{text-align:center;font-size:.7rem;color:var(--muted);margin:8px 0}
+.bubble{
+  max-width:82%;padding:10px 14px;border-radius:16px;font-size:.83rem;margin-bottom:10px;
+  animation:pop .5s both;
+}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
+.bubble.in{background:var(--cream-2);border-bottom-right-radius:4px;margin-inline-start:auto}
+.bubble.out{background:var(--najdi);color:var(--cream);border-bottom-left-radius:4px;margin-inline-end:auto}
+.bubble.out .star-row{color:var(--gold-bright)}
+.bubble .star-row{letter-spacing:2px;margin-top:4px}
+.bubble .time{display:block;font-size:.62rem;opacity:.6;margin-top:4px;text-align:left}
+.d1{animation-delay:.3s}.d2{animation-delay:1.1s}.d3{animation-delay:1.9s}.d4{animation-delay:2.7s}.d5{animation-delay:3.5s}
+.badge-float{
+  position:absolute;background:#fff;border:1px solid var(--line);border-radius:14px;
+  padding:12px 18px;box-shadow:0 14px 34px rgba(11,36,48,.14);z-index:3;font-size:.8rem;
+  display:flex;align-items:center;gap:10px;font-weight:600;
+}
+.badge-float .num{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:1.25rem;color:var(--najdi)}
+.bf-1{top:6%;right:-4%;animation:float 6s ease-in-out infinite .8s}
+.bf-2{bottom:10%;left:-6%;animation:float 6s ease-in-out infinite 1.6s}
+@media(max-width:900px){.bf-1{right:2%}.bf-2{left:2%}}
+
+/* ===== MARQUEE ===== */
+.marquee{
+  border-block:1px solid var(--line);background:var(--najdi);color:var(--cream);
+  overflow:hidden;padding:13px 0;position:relative;z-index:1;
+}
+.marquee-track{display:flex;gap:56px;white-space:nowrap;animation:scroll 26s linear infinite;width:max-content}
+@keyframes scroll{to{transform:translateX(50%)}}
+.marquee span{font-size:.9rem;display:flex;align-items:center;gap:12px;opacity:.92}
+.marquee .star{color:var(--gold-bright)}
+
+/* ===== SECTIONS ===== */
+section{padding:96px 0;position:relative;z-index:1}
+.sec-head{max-width:44rem;margin-bottom:56px}
+h2{font-family:'Alexandria',sans-serif;font-size:clamp(1.9rem,3.6vw,2.8rem);font-weight:700;line-height:1.4;margin:14px 0 10px}
+.sec-head p{color:var(--muted);font-weight:300;font-size:1.05rem}
+
+/* problem */
+.problem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+@media(max-width:820px){.problem-grid{grid-template-columns:1fr}}
+.stat-card{
+  background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+  padding:34px 28px;position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s;
+}
+.stat-card:hover{transform:translateY(-5px);box-shadow:0 18px 44px rgba(11,36,48,.1)}
+.stat-card::before{content:"";position:absolute;top:0;right:0;width:100%;height:4px;background:linear-gradient(270deg,var(--gold),transparent)}
+.stat-num{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:2.6rem;color:var(--rust);font-weight:500}
+.stat-card p{font-size:.92rem;color:var(--muted)}
+.stat-card h3{font-size:1.05rem;margin:8px 0 6px}
+
+/* rating calculator */
+.calc{
+  background:var(--najdi);border-radius:22px;padding:56px 48px;position:relative;overflow:hidden;
+  box-shadow:0 30px 70px rgba(0,59,77,.35);
+}
+.calc::before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.35;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='none' stroke='%23d9a520' stroke-opacity='0.12' stroke-width='1'%3E%3Cpath d='M80 8 L104 56 L152 80 L104 104 L80 152 L56 104 L8 80 L56 56 Z'/%3E%3C/g%3E%3C/svg%3E");
+}
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:44px;position:relative;z-index:1;align-items:center}
+@media(max-width:880px){.calc-grid{grid-template-columns:1fr;gap:34px}.calc{padding:40px 26px}}
+.calc .eyebrow{color:var(--gold-bright)}
+.calc h2{color:var(--cream)}
+.calc-lead{color:var(--cream);opacity:.78;font-weight:300;font-size:1.02rem}
+.calc-form{display:flex;flex-direction:column;gap:16px}
+.calc-field label{display:block;color:var(--gold-bright);font-size:.82rem;font-weight:600;margin-bottom:8px;letter-spacing:.04em}
+.calc-field input{
+  width:100%;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.22);
+  border-radius:12px;padding:13px 16px;color:var(--cream);font-family:'IBM Plex Sans Arabic',sans-serif;
+  font-size:1.05rem;outline:none;transition:border-color .2s,background .2s;
+}
+.calc-field input:focus{border-color:var(--gold-bright);background:rgba(255,255,255,.13)}
+.calc-field input::-webkit-outer-spin-button,.calc-field input::-webkit-inner-spin-button{-webkit-appearance:none}
+.calc-field input[type=number]{-moz-appearance:textfield}
+.calc-result{
+  background:rgba(255,255,255,.06);border:1.5px dashed rgba(217,165,32,.45);border-radius:16px;
+  padding:28px 26px;min-height:210px;display:flex;flex-direction:column;justify-content:center;gap:14px;
+}
+.calc-need{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:3.4rem;color:var(--gold-bright);line-height:1.1;font-weight:500}
+.calc-need small{font-size:1.2rem;color:var(--cream);font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:400}
+.calc-result p{color:var(--cream);opacity:.85;font-size:.95rem;font-weight:300}
+.calc-result .calc-days{color:var(--gold-bright);font-weight:600;opacity:1}
+.calc-bars{display:flex;align-items:flex-end;gap:5px;height:52px;margin-top:4px}
+.calc-bars span{flex:1;background:linear-gradient(180deg,var(--gold-bright),var(--najdi-deep));border-radius:4px 4px 0 0;min-height:6%;transition:height .8s cubic-bezier(.22,1,.36,1)}
+
+/* verticals */
+.vert-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+@media(max-width:820px){.vert-grid{grid-template-columns:1fr}}
+.vert{
+  background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+  padding:32px 30px;position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s;
+}
+.vert:hover{transform:translateY(-4px);box-shadow:0 18px 44px rgba(11,36,48,.1)}
+.vert::after{content:"";position:absolute;bottom:0;right:0;width:100%;height:4px;background:linear-gradient(270deg,var(--najdi),transparent)}
+.vert-head{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.vert-ico{
+  width:48px;height:48px;border-radius:12px;background:var(--cream-2);border:1.5px solid var(--gold);
+  display:grid;place-items:center;color:var(--najdi);font-size:1.25rem;
+}
+.vert h3{font-size:1.12rem}
+.vert .vert-sub{font-size:.76rem;color:var(--muted);font-weight:400}
+.vert ul{list-style:none;margin-top:6px}
+.vert li{
+  font-size:.88rem;color:var(--ink);padding:8px 0;border-bottom:1px dashed var(--line);
+  display:flex;gap:10px;align-items:baseline;font-weight:300;
+}
+.vert li:last-child{border-bottom:none}
+.vert li::before{content:"◆";color:var(--gold);font-size:.55rem;flex-shrink:0;transform:translateY(-2px)}
+.vert li b{font-weight:600}
+.vert-no-phone{
+  margin-top:18px;background:rgba(0,84,110,.06);border:1.5px dashed var(--najdi);border-radius:12px;
+  padding:12px 16px;font-size:.8rem;color:var(--najdi);font-weight:500;
+}
+.qr-strip{
+  margin-top:26px;background:var(--najdi);border-radius:16px;padding:26px 30px;color:var(--cream);
+  display:flex;gap:24px;align-items:center;flex-wrap:wrap;position:relative;overflow:hidden;
+}
+.qr-strip .qr-ico{
+  width:58px;height:58px;border-radius:14px;background:linear-gradient(135deg,var(--gold),#8a670c);
+  display:grid;place-items:center;font-size:1.6rem;color:#fff;flex-shrink:0;
+}
+.qr-strip h4{font-family:'Alexandria',sans-serif;font-size:1.15rem;margin-bottom:4px}
+.qr-strip p{font-size:.85rem;opacity:.78;font-weight:300}
+.qr-strip .qr-points{display:flex;gap:22px;flex-wrap:wrap;margin-top:6px}
+.qr-strip .qp{font-size:.78rem;color:var(--gold-bright);font-weight:500}
+
+/* features */
+.features{background:var(--najdi-deep);color:var(--cream);position:relative}
+.features::before{
+  content:"";position:absolute;inset:0;opacity:.35;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cg fill='none' stroke='%23d9a520' stroke-opacity='0.08'%3E%3Cpath d='M80 8 L104 56 L152 80 L104 104 L80 152 L56 104 L8 80 L56 56 Z'/%3E%3C/g%3E%3C/svg%3E");
+}
+.features .sec-head h2,.features .sec-head p{color:var(--cream)}
+.features .sec-head p{opacity:.75}
+.features .eyebrow{color:var(--gold-bright)}
+.features .eyebrow::before{background:var(--gold-bright)}
+.feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;position:relative;z-index:1}
+@media(max-width:820px){.feat-grid{grid-template-columns:1fr}}
+.feat{
+  background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.1);
+  border-radius:var(--radius);padding:32px 30px;transition:background .25s,transform .25s;
+}
+.feat:hover{background:rgba(217,165,32,.09);transform:translateY(-4px)}
+.feat-ico{
+  width:52px;height:52px;border-radius:13px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--gold),#8a670c);color:#fff;font-size:1.4rem;
+  margin-bottom:18px;box-shadow:0 8px 22px rgba(169,126,15,.3);
+}
+.feat h3{font-size:1.15rem;margin-bottom:8px}
+.feat p{font-size:.92rem;opacity:.72;font-weight:300}
+.feat .feat-tag{
+  display:inline-block;margin-top:14px;font-size:.7rem;font-weight:600;letter-spacing:.05em;
+  color:var(--gold-bright);border:1px solid rgba(217,165,32,.45);border-radius:100px;padding:3px 12px;
+}
+
+/* how it works */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:0;counter-reset:step;position:relative}
+@media(max-width:820px){.steps{grid-template-columns:1fr;gap:34px}}
+.step{padding:0 26px;position:relative}
+.step:not(:last-child)::after{
+  content:"";position:absolute;top:26px;left:-14px;width:100%;height:1.5px;
+  background:repeating-linear-gradient(90deg,var(--gold) 0 8px,transparent 8px 16px);
+}
+@media(max-width:820px){.step:not(:last-child)::after{display:none}}
+.step-num{
+  counter-increment:step;width:56px;height:56px;border-radius:50%;
+  background:var(--cream-2);border:1.5px solid var(--gold);color:var(--najdi);
+  display:grid;place-items:center;font-family:'Alexandria',sans-serif;font-size:1.5rem;font-weight:700;
+  margin-bottom:20px;box-shadow:0 0 0 6px var(--cream);
+}
+.step-num::before{content:counter(step,arabic-indic)}
+.step h3{font-size:1.1rem;margin-bottom:8px}
+.step p{font-size:.92rem;color:var(--muted);font-weight:300}
+
+/* compliance */
+.compliance{
+  background:linear-gradient(120deg,#f8fbfc,#eef5f8);border:1.5px solid var(--gold);
+  border-radius:20px;padding:42px 44px;display:flex;gap:26px;align-items:flex-start;
+  box-shadow:0 20px 50px rgba(169,126,15,.14);
+}
+@media(max-width:700px){.compliance{flex-direction:column;padding:32px 26px}}
+.compliance .shield{
+  min-width:64px;height:64px;border-radius:16px;background:var(--najdi);
+  display:grid;place-items:center;color:var(--gold-bright);font-size:1.7rem;
+}
+.compliance h3{font-size:1.2rem;margin-bottom:8px}
+.compliance p{font-size:.95rem;color:var(--muted)}
+.compliance strong{color:var(--rust)}
+
+/* result guarantee */
+.guarantee{
+  background:linear-gradient(120deg,var(--najdi),var(--najdi-deep));border-radius:20px;
+  padding:46px 44px;text-align:center;position:relative;overflow:hidden;
+  box-shadow:0 24px 60px rgba(0,59,77,.32);
+}
+.guarantee::before{
+  content:"";position:absolute;inset:0;opacity:.3;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='none' stroke='%23d9a520' stroke-opacity='0.14' stroke-width='1'%3E%3Cpath d='M80 8 L104 56 L152 80 L104 104 L80 152 L56 104 L8 80 L56 56 Z'/%3E%3C/g%3E%3C/svg%3E");
+}
+.guarantee .g-badge{
+  width:76px;height:76px;margin:0 auto 20px;border-radius:50%;position:relative;z-index:1;
+  background:linear-gradient(135deg,var(--gold),#8a670c);display:grid;place-items:center;
+  color:#fff;font-size:2rem;box-shadow:0 12px 34px rgba(169,126,15,.45);
+}
+.guarantee h3{font-family:'Alexandria',sans-serif;color:var(--cream);font-size:clamp(1.4rem,2.6vw,2rem);font-weight:700;position:relative;z-index:1}
+.guarantee p{color:var(--cream);opacity:.8;font-weight:300;max-width:36rem;margin:12px auto 0;position:relative;z-index:1}
+.guarantee .g-terms{font-size:.78rem;opacity:.55;margin-top:18px}
+
+/* pricing */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;align-items:stretch}
+@media(max-width:900px){.pricing-grid{grid-template-columns:1fr;max-width:430px;margin:0 auto}}
+.plan{
+  background:#fff;border:1px solid var(--line);border-radius:18px;padding:36px 30px;
+  display:flex;flex-direction:column;position:relative;transition:transform .25s,box-shadow .25s;
+}
+.plan:hover{transform:translateY(-6px);box-shadow:0 22px 50px rgba(11,36,48,.12)}
+.plan.hot{border:2px solid var(--najdi);box-shadow:0 22px 50px rgba(0,84,110,.14)}
+.plan .tag{
+  position:absolute;top:-15px;right:30px;background:var(--gold);color:#fff;
+  font-size:.75rem;font-weight:600;padding:5px 16px;border-radius:100px;
+}
+.plan h3{font-size:1.2rem}
+.plan .desc{font-size:.85rem;color:var(--muted);margin:4px 0 20px;font-weight:300}
+.price{font-family:'IBM Plex Sans Arabic',sans-serif;font-size:2.7rem;color:var(--najdi);font-weight:500}
+.price small{font-size:.9rem;font-family:'IBM Plex Sans Arabic',sans-serif;color:var(--muted);font-weight:300}
+.plan ul{list-style:none;margin:24px 0 30px;flex:1}
+.plan li{
+  font-size:.92rem;padding:8px 0;display:flex;gap:10px;align-items:flex-start;
+  border-bottom:1px dashed var(--line);
+}
+.plan li:last-child{border:none}
+.plan li::before{content:"✓";color:var(--najdi);font-weight:700;flex-shrink:0}
+.plan .btn{justify-content:center}
+
+/* FAQ */
+.faq{max-width:760px;margin:0 auto}
+.faq details{
+  background:#fff;border:1px solid var(--line);border-radius:12px;
+  padding:20px 26px;margin-bottom:14px;transition:border-color .2s;
+}
+.faq details[open]{border-color:var(--gold)}
+.faq summary{
+  cursor:pointer;font-weight:600;font-size:1rem;list-style:none;
+  display:flex;justify-content:space-between;align-items:center;gap:16px;
+}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-size:1.4rem;color:var(--gold);transition:transform .25s;font-weight:400}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq p{color:var(--muted);font-size:.93rem;margin-top:12px;font-weight:300}
+
+/* ===== CTA / WAITLIST ===== */
+.cta-sec{
+  background:var(--najdi);color:var(--cream);position:relative;overflow:hidden;
+  text-align:center;padding:110px 0;
+}
+.cta-sec::before{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 120%,rgba(217,165,32,.25),transparent 55%);
+}
+.cta-sec .wrap{position:relative;z-index:1}
+.cta-sec h2{color:var(--cream)}
+.cta-sec p{opacity:.75;font-weight:300;max-width:34rem;margin:0 auto 36px}
+.waitlist{
+  display:flex;gap:10px;max-width:480px;margin:0 auto;flex-wrap:wrap;justify-content:center;
+}
+.waitlist input{
+  flex:1;min-width:240px;padding:14px 20px;border-radius:10px;border:none;
+  font-family:'IBM Plex Sans Arabic',sans-serif;font-size:.95rem;background:rgba(255,255,255,.95);
+  color:var(--ink);outline:3px solid transparent;transition:outline .2s;
+}
+.waitlist input:focus{outline-color:var(--gold-bright)}
+.form-msg{margin-top:16px;font-size:.9rem;color:var(--gold-bright);min-height:1.4em;font-weight:500}
+
+/* footer */
+footer{border-top:1px solid var(--line);padding:34px 0;font-size:.85rem;color:var(--muted);position:relative;z-index:1}
+.foot-in{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
+
+/* reveal on scroll */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s,transform .7s}
+.reveal.on{opacity:1;transform:none}
+
+/* hero load animation */
+.hload{opacity:0;animation:rise .8s .1s forwards}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="topstrip"></div>
+
+<nav>
+  <div class="wrap nav-in">
+    <a class="logo" href="#">
+      <span class="logo-mark">★</span>
+      <span class="logo-name">سُمعة</span>
+    </a>
+    <div class="nav-links">
+      <a href="#problem">المشكلة</a>
+      <a href="#features">المميزات</a>
+      <a href="#pricing">الأسعار</a>
+      <a href="#faq">الأسئلة</a>
+      <a class="btn btn-primary" href="#waitlist" style="padding:10px 24px">اطلب تجربة</a>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <div class="hero-glow"></div>
+  <div class="wrap hero-grid">
+    <div class="hload">
+      <span class="eyebrow">أول منصة عربية لإدارة السمعة الرقمية</span>
+      <h1>
+        سمعتك هي متجرك الأول في <span class="gold">خرائط جوجل<svg viewBox="0 0 120 12" preserveAspectRatio="none"><path d="M2 9 Q 60 -2 118 8" fill="none" stroke="#a97e0f" stroke-width="3" stroke-linecap="round"/></svg></span> — ونحن نديرها عنك.
+      </h1>
+      <p class="hero-sub">
+        طلب تقييم تلقائي عبر واتساب بعد كل خدمة، ردود ذكية بالعربية على كل تقييم، وتنبيه فوري عند أي تقييم جديد — كل ذلك متوافق تمامًا مع سياسات جوجل.
+      </p>
+      <div class="hero-ctas">
+        <a class="btn btn-gold" href="#waitlist">ابدأ خلال دقائق — بدون بطاقة</a>
+        <a class="btn btn-ghost" href="app.html">جرّب لوحة التحكم ←</a>
+      </div>
+      <div class="hero-note"><span class="dot"></span> إعداد أولي مجاني + ضمان استرداد 30 يومًا</div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="badge-float bf-1"><span class="num">4.9★</span> بعد ٦٠ يومًا</div>
+      <div class="badge-float bf-2"><span class="num">+38</span> تقييمًا جديدًا هذا الشهر</div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-body">
+          <div class="chat-day">اليوم</div>
+          <div class="bubble in d1">السلام عليكم، خلصنا من صيانة المكيفات عندكم ✅<div class="time">11:04</div></div>
+          <div class="bubble out d2">وعليكم السلام! نورتونا 🌟 ياليت تقييمك يهمنا:<br><b>g.page/samea/demo</b><div class="time">11:05</div></div>
+          <div class="bubble in d3">خدمة ممتازة وسريعة، أنصح فيهم بقوة<div class="time">11:09</div></div>
+          <div class="bubble out d4">شكرًا من القلب! تقييمك وصلنا:<div class="star-row">★★★★★</div><div class="time">11:09</div></div>
+          <div class="bubble in d5">تجربة رائعة 👌<div class="time">11:10</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="marquee">
+  <div class="marquee-track">
+    <span><b class="star">★</b> عيادات أسنان</span><span><b class="star">★</b> مطاعم</span><span><b class="star">★</b> صيانة سيارات</span><span><b class="star">★</b> صالونات</span><span><b class="star">★</b> مكاتب عقار</span><span><b class="star">★</b> مغاسل</span><span><b class="star">★</b> مراكز تدريب</span><span><b class="star">★</b> مقاولون</span>
+    <span><b class="star">★</b> عيادات أسنان</span><span><b class="star">★</b> مطاعم</span><span><b class="star">★</b> صيانة سيارات</span><span><b class="star">★</b> صالونات</span><span><b class="star">★</b> مكاتب عقار</span><span><b class="star">★</b> مغاسل</span><span><b class="star">★</b> مراكز تدريب</span><span><b class="star">★</b> مقاولون</span>
+  </div>
+</div>
+
+<section id="problem">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">لماذا الآن؟</span>
+      <h2>عملاؤك يقيّمونك… وأنت لا تدري</h2>
+      <p>أغلب المنشآت في السعودية والخليج تخسر عملاء جدد يوميًا بسبب تقييمات مهمَلة وقليلة — وهي الخسارة التي لا تظهر في أي تقرير مالي.</p>
+    </div>
+    <div class="problem-grid">
+      <div class="stat-card reveal">
+        <div class="stat-num">75%</div>
+        <h3>لا يكتبون تقييمًا تلقائيًا</h3>
+        <p>العميل الراضي يخرج صامتًا، وغير الراضي يكتب فورًا — فتنقلب صورة نشاطك رأسًا على عقب.</p>
+      </div>
+      <div class="stat-card reveal">
+        <div class="stat-num">56%</div>
+        <h3>يقرؤون التقييمات قبل الزيارة</h3>
+        <p>أغلب الباحثين في جوجل يزورون نشاطًا منافسًا ذا تقييم أعلى قبل أن يفكروا بك.</p>
+      </div>
+      <div class="stat-card reveal">
+        <div class="stat-num">∞</div>
+        <h3>تقييمات بلا رد</h3>
+        <p>الرد بالعربية على كل تقييم — إيجابيًا كان أم سلبيًا — يرفع الثقة بشكل ملموس، لكن لا أحد يجد وقتًا له.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="calculator" style="padding-top:0">
+  <div class="wrap">
+    <div class="calc reveal">
+      <div class="calc-grid">
+        <div>
+          <span class="eyebrow">حاسبة السمعة</span>
+          <h2>كم تقييمًا يلزمك لتصل إلى 4.5 نجمة؟</h2>
+          <p class="calc-lead">أدخل تقييمك الحالي وعدد تقييماتك — وستُريك الحاسبة بالأرقام حجم الفجوة بينك وبين المنشآت التي يختارها عملاؤك بدلًا منك.</p>
+          <div class="calc-form" style="margin-top:26px">
+            <div class="calc-field">
+              <label for="calcRating">تقييمك الحالي (من 5)</label>
+              <input type="number" id="calcRating" min="1" max="5" step="0.1" value="4.2" inputmode="decimal">
+            </div>
+            <div class="calc-field">
+              <label for="calcCount">عدد تقييماتك الحالية</label>
+              <input type="number" id="calcCount" min="1" max="10000" step="1" value="80" inputmode="numeric">
+            </div>
+          </div>
+        </div>
+        <div class="calc-result">
+          <div class="calc-need" id="calcNeed">— <small>تقييم خمس نجوم</small></div>
+          <p>هذا ما تحتاجه من عملاء راضٍ جديد ليرتفع متوسطك إلى <strong>4.5 ★</strong> — النقطة التي يبدأ عندها جوجل بتفضيلك على أغلب منافسيك.</p>
+          <p id="calcTime"></p>
+          <div class="calc-bars" id="calcBars"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="verticals" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">لكل تصنيف طريقته</span>
+      <h2>«ما ناخذ رقم العميل» — ولمّا تكن مشكلة</h2>
+      <p>المطعم لا يأخذ رقمًا، والكاشير مزدحم — نعرف ذلك. لهذا صممنا لكل تصنيف طريقة جمع تناسب طبيعة عمله، وأغلبها لا يحتاج رقم هاتف أصلًا.</p>
+    </div>
+    <div class="vert-grid">
+      <div class="vert reveal">
+        <div class="vert-head">
+          <div class="vert-ico">◍</div>
+          <div><h3>المطاعم والكافيهات</h3><div class="vert-sub">زبون يمشي ولا يعود — بدون رقم</div></div>
+        </div>
+        <ul>
+          <li><b>QR ديناميكي على كل طاولة</b> — يمسح، يقيّم، وينال خصم فوري على الفاتورة</li>
+          <li><b>QR على الفاتورة الإلكترونية</b> — يظهر تلقائيًا مع كل طلب مدفوع</li>
+          <li><b>واي فاي التقييم</b> — يتصل بشبكتك فتظهر صفحة «قيّم زيارتك» قبل الإنترنت</li>
+        </ul>
+        <div class="vert-no-phone">لا حاجة لأي رقم هاتف — 100% بدون رقم</div>
+      </div>
+      <div class="vert reveal">
+        <div class="vert-head">
+          <div class="vert-ico">✚</div>
+          <div><h3>العيادات والمراكز الطبية</h3><div class="vert-sub">عندهم الأرقام أصلًا في نظام الحجز</div></div>
+        </div>
+        <ul>
+          <li><b>رسالة واتساب بعد الموعد بساعتين</b> — توقيت مثالي بعد زوال الانشغال</li>
+          <li><b>QR عند الاستقبال</b> — لمن يخرج دون حجز رقم</li>
+          <li><b>تقييم باسم الطبيب</b> — نجمع تقييمات كل طبيب على حدة ليقوى ملفه المهني</li>
+        </ul>
+        <div class="vert-no-phone">التكامل مع أنظمة الحجز يرفع الاستجابة إلى الضعف</div>
+      </div>
+      <div class="vert reveal">
+        <div class="vert-head">
+          <div class="vert-ico">✂</div>
+          <div><h3>الصالونات ومراكز التجميل</h3><div class="vert-sub">زبون متكرر يحتاج استدراجًا راقيًا</div></div>
+        </div>
+        <ul>
+          <li><b>بطاقات NFC على المرايا</b> — يقرب جواله فتفتح صفحة التقييم</li>
+          <li><b>طلب التقييم من المشرف</b> — رسالة تصله قبل خروج العميل بدقيقة</li>
+          <li><b>عجلة الجوائز بعد التقييم</b> — خصم على الزيارة القادمة (بأسلوب متوافق مع جوجل)</li>
+        </ul>
+        <div class="vert-no-phone">نظام نقاط اختياري يحول الزبون إلى مراجع دائم</div>
+      </div>
+      <div class="vert reveal">
+        <div class="vert-head">
+          <div class="vert-ico">⚒</div>
+          <div><h3>الورش والخدمات المنزلية</h3><div class="vert-sub">العميل متعب ويريد سماع رأيه بسرعة</div></div>
+        </div>
+        <ul>
+          <li><b>رسالة واتساب فور تسليم السيارة/الخدمة</b> — تبادل الأرقام موجود أصلًا</li>
+          <li><b>QR على بطاقة الخدمة</b> — ملصق على السيارة بعد الصيانة</li>
+          <li><b>تقييم الفني بعينه</b> — نقيس أداء كل فني من كلام العملاء</li>
+        </ul>
+        <div class="vert-no-phone">أعلى معدلات استجابة بين كل التصنيفات — 49%</div>
+      </div>
+    </div>
+    <div class="qr-strip reveal">
+      <div class="qr-ico">▩</div>
+      <div>
+        <h4>الـ QR الذكي — ليس مجرد مربع مرسوم</h4>
+        <p>كل رمز نولّده فريد ومُتتبَّع: نعرف عدد المسوحات، من طاولة جاءت، وفي أي ساعة، وأي صياغة صفحة تحقق أعلى تقييم — ونحسّن تلقائيًا.</p>
+        <div class="qr-points">
+          <span class="qp">◆ تتبع المسح والتحويل لكل طاولة وفني وفرع</span>
+          <span class="qp">◆ اختبار A/B تلقائي على نصوص الصفحة</span>
+          <span class="qp">◆ تصميم يحمل هوية نشاطك — لا يبدو خارجًا عنه</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features" id="features">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">كيف تعمل سُمعة؟</span>
+      <h2>أربع أدوات تحوّل سمعتك إلى ماكينة عملاء</h2>
+      <p>نبنيها لتبقى بسيطة: تفعيل خلال دقائق، وكل شيء يعمل في الخلفية وأنت تدير عملك.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat reveal">
+        <div class="feat-ico">⇪</div>
+        <h3>محرك التقييمات عبر واتساب</h3>
+        <p>بعد كل خدمة، رسالة واتساب قصيرة باسم نشاطك تحمل رابط التقييم ورمز QR — مع توقيت إرسال ذكي وتذكير واحد مهذب لمن لم يفتح الرسالة. من 3 تقييمات بالشهر إلى 30+.</p>
+        <span class="feat-tag">هذا ما يرفع متوسطك فعلًا</span>
+      </div>
+      <div class="feat reveal">
+        <div class="feat-ico">✎</div>
+        <h3>ردود ذكية بالعربية — بضغطة واحدة</h3>
+        <p>ذكاء اصطناعي يقرأ كل تقييم ويصيغ ردًّا مخصصًا باسم صاحبه وموضوعه، بلهجة احترافية دافئة — تراجعه وتنشره في ثوانٍ. لا تقييم يبقى بلا رد بعد اليوم.</p>
+        <span class="feat-tag">معدل رد 94% مقابل 41% قبل التفعيل</span>
+      </div>
+      <div class="feat reveal">
+        <div class="feat-ico">◈</div>
+        <h3>إنقاذ العميل قبل التقييم السلبي</h3>
+        <p>لحظة وصول تقييم أقل من 4 نجوم، يصلك تنبيه فوري مع خطة استرجاع: نص اعتذار جاهز، مهمة اتصال للإدارة، ومتابعة حتى يعدّل العميل تقييمه. تقييم سلبي واحد محوَّل يوازي 20 تقييمًا جديدًا.</p>
+        <span class="feat-tag">الأقوى مبيعًا — لا يقدر عليه صاحب المنشأة بنفسه</span>
+      </div>
+      <div class="feat reveal">
+        <div class="feat-ico">▤</div>
+        <h3>ذكاء تجاري من كلام عملائك</h3>
+        <p>نحلل كلمات كل تقييم ونستخرج ما يحبه عملاؤك (السرعة؟ السعر؟ التعامل؟) وما يزعجهم — لوحة تحليلات تحول التقييمات إلى قرارات: نقطة قوة تحصّنها، ومشكلة تصلحها قبل أن تتكرر في عشرات التقييمات القادمة.</p>
+        <span class="feat-tag">معلومات لا تظهر في أي تقرير مبيعات</span>
+      </div>
+      <div class="feat reveal">
+        <div class="feat-ico">⚔</div>
+        <h3>مراقبة المنافسين وعداد العملاء الضائعين</h3>
+        <p>تتبع لحظي لتقييمات منافسيك في نفس الحي، مع تنبيه إذا تجاوزك أحدهم — وتقدير شهري لعدد العملاء الذين اختاروا غيرك بسبب فجوة التقييم. ستعرف بالضبط كم يكلفك كل 0.1 نجمة.</p>
+        <span class="feat-tag">تنبيه فوري إذا تجاوزك منافس</span>
+      </div>
+      <div class="feat reveal">
+        <div class="feat-ico">⛨</div>
+        <h3>درع الحماية من التقييمات المزيفة</h3>
+        <p>رصد التقييمات المشبوهة وحملات التقييم المضادة من المنافسين، مع إعداد بلاغ جاهز بالأدلة إلى جوجل لمراجعتها وحذفها. لا تُترك وحدك أمام هجوم على سمعتك.</p>
+        <span class="feat-tag">خدمة لا يقدمها أحد في المنطقة</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">ثلاث خطوات</span>
+      <h2>من التفعيل إلى أول تقييم جديد في نفس اليوم</h2>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num"></div>
+        <h3>اربط نشاطك</h3>
+        <p>نربط ملفك التجاري في جوجل ورقم واتساب أعمالك — بدون أي تركيب تقني، خلال دقائق.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num"></div>
+        <h3>أرسل الطلبات</h3>
+        <p>أدخل رقم العميل أو اربط نظام الحجز — ونتولى نحن التوقيت والصياغة والمتابعة.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num"></div>
+        <h3>راقب سمعتك تنمو</h3>
+        <p>كل تقييم جديد يصل، وكل رد يُكتب، وكل أثر على حجوزاتك — في لوحة واحدة واضحة.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="compliance reveal">
+      <div class="shield">✓</div>
+      <div>
+        <h3>التزام كامل بسياسات جوجل — بلا حِيَل تُعرّضك للحظر</h3>
+        <p>بعض الأدوات تسوّق «فرز التقييمات السلبية قبل نشرها» — وهي ممارسة تخالف سياسات جوجل صراحةً وقد تؤدي إلى <strong>تعليق ملفك التجاري نهائيًا</strong>. سُمعة لا تفعل ذلك أبدًا: نرسل طلب التقييم لكل عميل، ونحوّل الانتقادات إلى فرصة خدمة استثنائية.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="guarantee reveal">
+      <div class="g-badge">✓</div>
+      <h3>ضمان النتيجة: تقييمك لا يرتفع خلال 90 يومًا؟ الشهر الرابع علينا</h3>
+      <p>نحن الوحيدون في المنطقة الذين يربطون دخهم بنتيجتك: +0.2 نجمة على الأقل خلال أول 90 يومًا من التفعيل — أو لا تدفع شيئًا حتى تتحقق. لا نبيع «برنامج»، نبيع ارتفاعًا في تقييمك بالأرقام، ونقيسه معك شهريًا.</p>
+      <div class="g-terms">يشترط إرسال 40+ طلب تقييم شهريًا عبر المنصة — نثق بمنهجيتنا لدرجة أننا نتحمل المخاطرة عنك.</div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing" style="padding-top:20px">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">الأسعار</span>
+      <h2>أقل من تكلفة عميل واحد تفقده شهريًا</h2>
+      <p>ابدأ مجانًا مع أول ٢٠ طلب تقييم، وارتقِ عندما تظهر النتائج. أسعار شهرية، بإلغاء في أي وقت.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="plan reveal">
+        <h3>البداية</h3>
+        <p class="desc">للمنشأة الواحدة التي تريد الانطلاق</p>
+        <div class="price">99 <small>ريال / شهر</small></div>
+        <ul>
+          <li>١٠٠ طلب تقييم واتساب شهريًا</li>
+          <li>ردود ذكية مقترحة — ٣٠ ردًا شهريًا</li>
+          <li>صفحة تقييم مخصصة قصيرة</li>
+          <li>لوحة متابعة أساسية</li>
+        </ul>
+        <a class="btn btn-ghost" href="#waitlist">ابدأ مجانًا</a>
+      </div>
+      <div class="plan hot reveal">
+        <span class="tag">الأكثر اختيارًا</span>
+        <h3>النمو</h3>
+        <p class="desc">للمنشآت التي تريد نتائج ملموسة</p>
+        <div class="price">249 <small>ريال / شهر</small></div>
+        <ul>
+          <li>طلبات تقييم غير محدودة</li>
+          <li>ردود ذكية بالعربية — غير محدودة</li>
+          <li>إنقاذ العميل قبل التقييم السلبي</li>
+          <li>ذكاء تجاري من كلام عملائك</li>
+          <li>مراقبة المنافسين وعداد العملاء الضائعين</li>
+          <li>درع الحماية من التقييمات المزيفة</li>
+          <li>ضمان النتيجة 90 يومًا</li>
+        </ul>
+        <a class="btn btn-primary" href="#waitlist">جرّب ١٤ يومًا مجانًا</a>
+      </div>
+      <div class="plan reveal">
+        <h3>السلاسل</h3>
+        <p class="desc">لفروع متعددة أو مجموعات</p>
+        <div class="price">499 <small>ريال / شهر</small></div>
+        <ul>
+          <li>حتى ٥ فروع بلوحات منفصلة</li>
+          <li>تقارير مقارنة بين الفروع</li>
+          <li>صلاحيات موظفين متعددة</li>
+          <li>مدير حساب مخصص</li>
+        </ul>
+        <a class="btn btn-ghost" href="#waitlist">تواصل معنا</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq" style="padding-top:20px">
+  <div class="wrap">
+    <div class="sec-head reveal" style="text-align:center;margin-inline:auto">
+      <span class="eyebrow" style="justify-content:center">أسئلة متكررة</span>
+      <h2>كل ما يسألنا عنه أصحاب المنشآت</h2>
+    </div>
+    <div class="faq reveal">
+      <details>
+        <summary>هل شراء التقييمات أو فرزها مسموح؟</summary>
+        <p>لا. شراء التقييمات أو منع العميل من الوصول لنموذج جوجل «حتى يختبر رضاه» يخالف سياسات جوجل ويعرّض ملفك للتعليق. سُمعة تكبر سمعتك بطرق مشروعة فقط: طلب التقييم في اللحظة المناسبة، وخدمة تستحق الخمس نجوم.</p>
+      </details>
+      <details>
+        <summary>هل أحتاج خبرة تقنية للتفعيل؟</summary>
+        <p>إطلاقًا. تحتاج فقط صلاحية «مالك» على ملفك التجاري في جوجل ورقم واتساب. نرابط كل شيء نيابة عنك خلال جلسة إعداد واحدة مدتها ١٥ دقيقة.</p>
+      </details>
+      <details>
+        <summary>كيف تصل رسائل الطلب؟ من رقم مَن؟</summary>
+        <p>تُرسل من رقم نشاطك التجاري الرسمي عبر واتساب أعمال، فيظهر اسم نشاطك وشعارك — لا من رقم غريب. وتصل بعد انتهاء الخدمة مباشرة، وهو التوقيت الذي يحقق أعلى معدلات استجابة.</p>
+      </details>
+      <details>
+        <summary>ماذا لو وصلني تقييم سلبي؟</summary>
+        <p>يصلك تنبيه فوري مع مسودة رد مُصاغة بعناية، ونصيحة بخطوة الخدمة التالية (اتصال، استبدال، اعتذار). التعامل السريع والاحترافي مع التقييم السلبي يقلل أثره بشدة — وكثير من العملاء يعدّلون تقييمهم بعد اهتمام حقيقي.</p>
+      </details>
+      <details>
+        <summary>هل أستطيع الإلغاء؟</summary>
+        <p>في أي وقت وبضغطة واحدة، بدون أسئلة. ونضيف لك ضمان استرداد ٣٠ يومًا إذا لم ترَ تحسنًا في عدد تقييماتك.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="cta-sec" id="waitlist">
+  <div class="wrap">
+    <span class="eyebrow" style="color:var(--gold-bright)">انضم للقائمة المبكرة</span>
+    <h2>أول ٥٠ منشأة تحصل على خصم ٤٠٪ مدى الحياة</h2>
+    <p>اترك رقمك وسنراسلك على واتساب لتحديد جلسة إعداد مجانية — نشوف معك ملفك التجاري الحالي ونعطيك تقرير سمعة مجاني حتى لو لم تشترك.</p>
+    <form class="waitlist" id="waitlistForm">
+      <input type="text" id="wlName" placeholder="اسمك" required>
+      <input type="text" id="wlPhone" placeholder="رقم الواتساب 05xxxxxxxx" required>
+      <button class="btn btn-gold" type="submit">احفظ مكاني</button>
+    </form>
+    <div class="form-msg" id="formMsg"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-in">
+    <div>© 2026 سُمعة — صُنعت في السعودية 🇸🇦</div>
+    <div><span class="mono" style="font-size:.78rem">hello@samea.sa</span> · <a href="app.html" style="color:var(--najdi)">لوحة التحكم التجريبية ←</a></div>
+  </div>
+</footer>
+
+<script>
+// waitlist
+document.getElementById('waitlistForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  var name=document.getElementById('wlName').value.trim(),
+      phone=document.getElementById('wlPhone').value.trim();
+  if(!name||!phone){return}
+  var list=JSON.parse(localStorage.getItem('samea_waitlist')||'[]');
+  list.push({name:name,phone:phone,at:new Date().toISOString()});
+  localStorage.setItem('samea_waitlist',JSON.stringify(list));
+  document.getElementById('formMsg').textContent='تم! احفظنا مكانك يا '+name+' — سنراسلك على '+phone+' قريبًا جدًا ✓';
+  this.reset();
+});
+
+// scroll reveal
+var io=new IntersectionObserver(function(es){
+  es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('on');io.unobserve(en.target)}})
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el)});
+
+// rating calculator
+var TARGET=4.5;
+function needFiveStars(cur,count){
+  // how many 5-star reviews to reach TARGET: (cur*count + 5x)/(count+x) >= TARGET
+  if(cur>=TARGET){return 0}
+  var x=Math.ceil((TARGET*count-cur*count)/(5-TARGET));
+  return Math.max(x,1);
+}
+function runCalc(){
+  var cur=parseFloat(document.getElementById('calcRating').value);
+  var count=parseInt(document.getElementById('calcCount').value,10);
+  var needEl=document.getElementById('calcNeed'),timeEl=document.getElementById('calcBars');
+  if(!cur||!count||cur<1||cur>5||count<1){needEl.innerHTML='أدخل أرقامًا صحيحة';return}
+  cur=Math.min(cur,5);
+  var n=needFiveStars(cur,count);
+  if(n===0){
+    document.getElementById('calcNeed').innerHTML='✓ أنت فوق 4.5';
+    document.getElementById('calcTime').textContent='حظك ممتاز — مهمتك الآن هي الحفاظ على المستوى، وسُمعة تتكفل بالمتابعة والرد على كل تقييم.';
+  }else{
+    document.getElementById('calcNeed').innerHTML=n+' <small>تقييم خمس نجوم</small>';
+    var months=Math.ceil(n/20);
+    document.getElementById('calcTime').innerHTML='بمعدل '+n+' تقييمًا جديدًا، وبمسار سُمعة (نحو 20 تقييمًا شهريًا عبر واتساب) تصل خلال <span class="calc-days">≈ '+months+' شهرًا</span> — بينما تلعب سمعتك الحالية دورها كل يوم في اختبار عملائك لك.';
+  }
+  // bars: current avg vs projection
+  var bars=document.getElementById('calcBars');bars.innerHTML='';
+  for(var i=0;i<12;i++){
+    var s=document.createElement('span');
+    var progress=Math.min((i+1)/12,1);
+    var avg=(cur*count+5*n*progress)/(count+n*progress);
+    s.style.height=Math.max((avg/5)*100,8)+'%';
+    s.title=avg.toFixed(2)+' ★';
+    bars.appendChild(s);
+  }
+}
+document.getElementById('calcRating').addEventListener('input',runCalc);
+document.getElementById('calcCount').addEventListener('input',runCalc);
+runCalc();
+</script>
+</body>
+</html>
